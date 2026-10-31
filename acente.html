@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0E6A70">
+<title>Acente ekranı, Mavi Kumanya demo</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="app">
+<div class="phone-wrap">
+  <div class="phone">
+    <div class="appbar">
+      <button type="button" id="back" class="hide" aria-label="Geri">Geri</button>
+      <h1 id="title">Mavi Kumanya</h1>
+      <button type="button" id="logout" class="hide">Çıkış</button>
+    </div>
+    <div class="scroll" id="view"></div>
+    <div class="tabbar hide" id="tabs">
+      <button type="button" data-go="liste">Siparişlerim</button>
+      <button type="button" data-go="yeni" class="plus"><span>+</span>Yeni sipariş</button>
+    </div>
+  </div>
+</div>
+<div class="foot">Demo, örnek verilerle çalışır. Hazırlayan: Webizmo</div>
+<script src="store.js"></script>
+<script src="acente.js"></script>
+</body>
+</html>

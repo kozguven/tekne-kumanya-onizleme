@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Teklif / fatura, Mavi Kumanya demo</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="doc-wrap">
+  <div class="doc-tools">
+    <button type="button" class="btn alt" onclick="history.length > 1 ? history.back() : location.href = 'panel.html'">Geri</button>
+    <div class="acts">
+      <button type="button" class="btn alt" id="share">WhatsApp'tan paylaş</button>
+      <button type="button" class="btn" onclick="window.print()">Yazdır / PDF kaydet</button>
+    </div>
+  </div>
+  <div class="doc" id="doc"></div>
+</div>
+<div class="foot">Demo belge, örnek verilerle oluşturulmuştur. Hazırlayan: Webizmo</div>
+<script src="store.js"></script>
+<script>
+(function () {
+  const qs = new URLSearchParams(location.search);
+  const o = order(qs.get('id')), isInv = qs.get('tip') === 'fatura';
+  const doc = $('#doc');
+  if (!o) { doc.innerHTML = '<p>Belge bulunamadı. <a href="panel.html">Panele dön</a></p>'; return; }
+  const c = cust(o.c), f = isInv ? S.invoices.find(x => x.id === o.invoiceId) : null;
+  const vat = kdvSplit(o), sum = total(o);
+  document.title = (isInv ? 'Fatura ' + (f ? f.no : '') : 'Teklif ' + o.no) + ', Mavi Kumanya demo';
+  doc.innerHTML = `
+    <div class="dh">
+      <div><div style="display:flex;align-items:center;gap:10px"><div class="mark">M</div><b style="font-family:'Barlow Condensed';font-size:22px">Mavi Kumanya</b></div>
+        <p class="small muted" style="margin-top:6px">Tekne kumanya tedariki<br>Göcek / Fethiye, 0252 000 00 00</p></div>
+      <div style="text-align:right"><h1>${isInv ? esc(f ? f.type : '') + ' Fatura' : 'Kumanya Teklifi'}</h1>
+        <p class="small">${isInv && f ? 'Fatura no: <b>' + f.no + '</b><br>Tarih: ' + trDate(f.date) : 'Teklif no: <b>' + o.no + '</b>, sürüm ' + o.version + '<br>Tarih: ' + trDate(dayStr(0))}</p></div>
+    </div>
+    <div class="two">
+      <div><small>${isInv ? 'Alıcı' : 'Fatura kesilecek müşteri'}</small><b>${esc(c.name)}</b><br>${esc(c.taxNo)}<br>${esc(c.addr)}</div>
+      <div><small>Tekne ve teslim</small><b>${esc(boat(o.b).name)}</b>, ${esc(agency(o.a).name)}<br>${trDate(o.date)} ${o.time}<br>${esc(o.place)}</div>
+    </div>
+    <div class="tw"><table class="t"><thead><tr><th>Ürün</th><th class="r">Miktar</th><th class="r">Birim fiyat</th><th class="r">KDV</th><th class="r">Tutar</th></tr></thead><tbody>
+      ${o.lines.map(l => { const p = prod(l.pid); return `<tr><td>${esc(p.name)}</td><td class="r">${qtyTxt(lineQty(l), p.unit)}</td><td class="r num">${money(l.price)}</td><td class="r">%${p.kdv}</td><td class="r num">${money(lineTotal(l))}</td></tr>`; }).join('')}
+    </tbody></table></div>
+    <div class="totals">
+      ${vat.map(v => `<div class="sumrow small"><span>Matrah (%${v.k})</span><span class="num">${money(v.net)}</span></div><div class="sumrow small"><span>KDV %${v.k}</span><span class="num">${money(v.vat)}</span></div>`).join('')}
+      <div class="sumrow tot"><span>${isInv ? 'Ödenecek tutar' : 'Teklif tutarı'}</span><span class="num">${money(sum)}</span></div>
+    </div>
+    <p class="note">${isInv
+      ? 'Bu belge demodur; gerçek fatura özel entegratör üzerinden GİB\'e iletilir ve müşterinin e-posta adresine gönderilir.'
+      : 'Gramajlı ürünlerde tutar tartıma göre netleşmiştir. İlave ürünler eklendiğinde teklif yeni sürümle yeniden gönderilir. Teklif teslim tarihine kadar geçerlidir.'}
+      Fiyat ve KDV oranları örnektir.</p>`;
+  $('#share').onclick = () => toast('Gerçek sistemde PDF telefonun paylaşım menüsüyle WhatsApp\'tan gönderilir.');
+})();
+</script>
+</body>
+</html>

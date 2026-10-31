@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Mavi Kumanya demo</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="home">
+  <div class="top"><div class="mark">M</div><div><b style="font-family:'Barlow Condensed';font-size:22px">Mavi Kumanya</b><div class="small muted">Sipariş, teklif ve fatura sistemi, tıklanabilir demo</div></div></div>
+  <h1>Umut Bey, sisteminizi buradan deneyebilirsiniz</h1>
+  <p class="lead">Demo iki taraftan oluşur. Acente telefonundan sipariş verir; siz yönetim panelinde teklifi hazırlar, barkodla ürünleri toplar ve tek tuşla faturayı kesersiniz. İki ekran birbirine bağlıdır: acente tarafında verdiğiniz sipariş panelde teklif olarak görünür.</p>
+
+  <div class="doors">
+    <a class="door" href="acente.html">
+      <div class="who">Acentenin ekranı, telefon</div>
+      <h2>Sipariş ver</h2>
+      <p>Tekneyi ve fatura kesilecek müşteriyi seçin, ürünleri ekleyin, teslim saatini girin ve siparişi gönderin. Teklif hazır olunca onaylayın.</p>
+      <span class="btn flag go">Acente olarak gir</span>
+    </a>
+    <a class="door" href="panel.html">
+      <div class="who">Sizin ekranınız, telefon ve bilgisayar</div>
+      <h2>Yönetim paneli</h2>
+      <p>Gelen teklifler, barkodla hazırlık, PDF teklif, tekneye yükleme, ödeme ve faturaya çevirme. Raporlar ve ürün listesi de burada.</p>
+      <span class="btn go">Paneli aç</span>
+    </a>
+  </div>
+
+  <div class="steps">
+    <div><b>1. Acente sipariş verir</b>Acente ekranında "Yeni sipariş" ile tekne, müşteri ve ürünleri seçip gönderin.</div>
+    <div><b>2. Siz hazırlarsınız</b>Panelde Teklifler'den siparişi açın, "Hazırlığa başla" ile barkod okutun; okunan satır yeşile döner.</div>
+    <div><b>3. Fatura kesilir</b>PDF'i gönderin, onaylayın, "Tekneye yüklendi" ve "Ödeme al" deyip "Faturaya çevir"e basın.</div>
+  </div>
+
+  <ul class="notes">
+    <li>Sağ alttaki "Ekranlar" düğmesiyle tüm ekranlar arasında geçebilirsiniz.</li>
+    <li>Mavi Kumanya, acenteler, tekneler, müşteriler ve fiyatlar örnektir. Gerçek sistemde sizin ürün listeniz ve logonuz olur.</li>
+    <li>Demoda gerçek fatura kesilmez, mesaj gönderilmez. Yaptığınız denemeler yalnız sizin tarayıcınızda kalır; "Demoyu baştan başlat" ile sıfırlanır.</li>
+    <li>Kamerayla barkod okuma bu demoda Android telefonlarda çalışır; iPhone'da "Sıradaki ürünü okut" düğmesini kullanın. Gerçek sistemde iki telefonda da çalışır.</li>
+  </ul>
+</div>
+<div class="foot">Demo, Webizmo tarafından hazırlanmıştır.</div>
+<script src="store.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Yönetim paneli, Mavi Kumanya demo</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="mtop">
+  <div class="mark" style="width:34px;height:34px;font-size:18px">M</div>
+  <select id="msel" aria-label="Bölüm seçin">
+    <option value="ozet">Özet</option><option value="teklifler">Teklifler</option><option value="faturalar">Faturalar</option>
+    <option value="urunler">Ürünler</option><option value="acenteler">Acenteler ve tekneler</option><option value="raporlar">Raporlar</option>
+  </select>
+</div>
+<div class="pn">
+  <aside class="side">
+    <div class="brand"><div class="mark">M</div><div><b>Mavi Kumanya</b><small>Yönetim paneli</small></div></div>
+    <nav id="nav">
+      <a href="#ozet" data-r="ozet">Özet</a>
+      <a href="#teklifler" data-r="teklifler">Teklifler <span class="c" id="newc"></span></a>
+      <a href="#faturalar" data-r="faturalar">Faturalar</a>
+      <a href="#urunler" data-r="urunler">Ürünler</a>
+      <a href="#acenteler" data-r="acenteler">Acenteler ve tekneler</a>
+      <a href="#raporlar" data-r="raporlar">Raporlar</a>
+    </nav>
+  </aside>
+  <main class="main" id="view"></main>
+</div>
+<script src="store.js"></script>
+<script src="panel.js"></script>
+</body>
+</html>
