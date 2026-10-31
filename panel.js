@@ -55,7 +55,7 @@ function viewSummary() {
   bindRows();
 }
 function nextStep(o) {
-  return { yeni: 'Hazırlığa başlanacak', hazirlaniyor: 'Barkodla hazırlık sürüyor', teklif: 'Acente onayı bekleniyor', onaylandi: 'Tekneye yüklenecek', yuklendi: o.payment ? 'Faturaya çevrilecek' : 'Ödeme alınacak' }[o.status] || '';
+  return { musteri: 'Acentenin müşterisi onaylayacak', yeni: 'Hazırlığa başlanacak', hazirlaniyor: 'Barkodla hazırlık sürüyor', teklif: 'Acente onayı bekleniyor', onaylandi: 'Tekneye yüklenecek', yuklendi: o.payment ? 'Faturaya çevrilecek' : 'Ödeme alınacak' }[o.status] || '';
 }
 
 /* --- teklif listesi --- */
@@ -63,7 +63,7 @@ function viewOffers() {
   const list = S.orders.filter(o => filter === 'hepsi' || o.status === filter).sort((a, b) => b.no - a.no);
   view.innerHTML = `
     <div class="hd"><div><h1>Teklifler</h1><p>Acentelerden gelen her sipariş burada teklif olarak açılır.</p></div></div>
-    <div class="filters">${['hepsi', ...FLOW].map(s => `<button type="button" data-f="${s}" class="${filter === s ? 'on' : ''}">${s === 'hepsi' ? 'Hepsi' : STATUS[s]} (${s === 'hepsi' ? S.orders.length : S.orders.filter(o => o.status === s).length})</button>`).join('')}</div>
+    <div class="filters">${['hepsi', 'musteri', ...FLOW].map(s => `<button type="button" data-f="${s}" class="${filter === s ? 'on' : ''}">${s === 'hepsi' ? 'Hepsi' : STATUS[s]} (${s === 'hepsi' ? S.orders.length : S.orders.filter(o => o.status === s).length})</button>`).join('')}</div>
     <div class="card">${orderTable(list)}</div>`;
   view.querySelectorAll('[data-f]').forEach(b => b.onclick = () => { filter = b.dataset.f; viewOffers(); });
   bindRows();
@@ -73,6 +73,7 @@ function viewOffers() {
 function viewOffer(id) {
   const o = order(id), c = cust(o.c), editable = FLOW.indexOf(o.status) < 4;
   const acts = {
+    musteri: `<span class="small muted" style="align-self:center;max-width:300px">Acente tahmini teklifi müşteriye gönderdi; müşteri kabul edince sipariş "Yeni sipariş" olarak düşer.</span>`,
     yeni: `<a class="btn" href="#hazirlik/${o.id}" data-start>Hazırlığa başla</a><button class="btn alt" data-pdf>Teklif PDF'ini gönder</button>`,
     hazirlaniyor: `<a class="btn" href="#hazirlik/${o.id}">Barkodla hazırlık</a><button class="btn alt" data-pdf>Teklif PDF'ini gönder</button>`,
     teklif: `<button class="btn" data-approve>Onaylandı olarak işaretle</button><button class="btn alt" data-pdf>PDF'i yeniden gönder</button>`,

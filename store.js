@@ -1,5 +1,5 @@
 /* Demo verisi ve ortak yardımcılar. Veriler yalnız bu tarayıcıda saklanır. */
-const KEY = 'kumanya-demo-v1';
+const KEY = 'kumanya-demo-v2';
 
 const CATS = ['Kasap', 'Balık', 'Manav', 'Süt ve kahvaltılık', 'Market', 'İçecek'];
 
@@ -79,6 +79,7 @@ const CUSTOMERS = [
 const PLACES = ['Göcek Belediye İskelesi', 'Göcek Skopea Marina', 'Fethiye Ece Marina', 'Fethiye Kordon İskelesi'];
 
 const STATUS = {
+  musteri: 'Müşteri onayında',
   yeni: 'Yeni sipariş',
   hazirlaniyor: 'Hazırlanıyor',
   teklif: 'Teklif gönderildi',
@@ -105,6 +106,8 @@ function seed() {
       lines: [L('p21', 2), L('p22', 3), L('p23', 1), L('p30', 1), L('p31', 2), L('p32', 1), L('p29', 3), L('p33', 4), L('p34', 2), L('p1', 2.5), L('p11', 3), L('p12', 2), L('p13', 1), L('p39', 12), L('p41', 6)] },
     { id: 'o2', no: 1117, a: 'a1', b: 'b2', c: 'c2', date: dayStr(1), time: '10:30', place: PLACES[1], note: '', status: 'hazirlaniyor', version: 1, created: dayStr(-1),
       lines: [L('p7', 3, { done: true, actual: 3.2 }), L('p8', 2, { done: true, actual: 2 }), L('p26', 2, { done: true }), L('p27', 1, { done: true }), L('p24', 1.5), L('p28', 1), L('p37', 1), L('p14', 8), L('p40', 6), L('p43', 4)] },
+    { id: 'o7', no: 1119, a: 'a1', b: 'b4', c: 'c3', date: dayStr(2), time: '09:30', place: PLACES[0], note: 'Müşteriye tahmini teklif gönderildi.', status: 'musteri', version: 1, created: dayStr(0),
+      lines: [L('p2', 1.5), L('p4', 2), L('p11', 3), L('p12', 2), L('p21', 4), L('p26', 1), L('p33', 3), L('p39', 12), L('p41', 6)] },
     { id: 'o3', no: 1116, a: 'a2', b: 'b5', c: 'c4', date: dayStr(0), time: '08:30', place: PLACES[2], note: 'Kahvaltılıklar ayrı kasada olsun.', status: 'teklif', version: 2, created: dayStr(-2),
       lines: [L('p2', 2, { done: true, actual: 2.1 }), L('p4', 3, { done: true, actual: 3 }), L('p16', 5, { done: true, actual: 5 }), L('p17', 3, { done: true, actual: 3 }), L('p26', 3, { done: true }), L('p21', 6, { done: true }), L('p38', 2, { done: true }), L('p42', 4, { done: true })] },
     { id: 'o4', no: 1115, a: 'a3', b: 'b8', c: 'c6', date: dayStr(0), time: '11:00', place: PLACES[3], note: '', status: 'onaylandi', version: 1, created: dayStr(-2),
@@ -116,9 +119,9 @@ function seed() {
       payment: { method: 'Nakit', amount: 0, date: dayStr(-4) }, invoiceId: 'f1',
       lines: [L('p1', 3, { done: true, actual: 3 }), L('p7', 2, { done: true, actual: 2 }), L('p21', 4, { done: true }), L('p26', 2, { done: true }), L('p30', 1, { done: true }), L('p15', 6, { done: true, actual: 6 }), L('p41', 8, { done: true })] }
   ];
-  const s = { products: PRODUCTS, agencies: AGENCIES, boats: BOATS, customers: CUSTOMERS.slice(), orders, invoices: [], seq: { order: 1119, invoice: 58, customer: 7 } };
-  const o5 = orders[4]; o5.payment.amount = total(o5);
-  const o6 = orders[5]; o6.payment.amount = total(o6);
+  const s = { products: PRODUCTS, agencies: AGENCIES, boats: BOATS, customers: CUSTOMERS.slice(), orders, invoices: [], seq: { order: 1120, invoice: 58, customer: 7 } };
+  const o5 = orders.find(o => o.id === 'o5'); o5.payment.amount = total(o5);
+  const o6 = orders.find(o => o.id === 'o6'); o6.payment.amount = total(o6);
   s.invoices.push({ id: 'f1', no: 'MKU2026000000057', orderId: 'o6', date: dayStr(-4), type: 'e-Arşiv', amount: total(o6) });
   return s;
 }

@@ -55,6 +55,7 @@ label.f span{display:block;font-size:14px;font-weight:600;color:var(--ink-2);mar
 
 /* durum etiketleri */
 .st{display:inline-block;padding:3px 10px;border-radius:6px;font-size:13px;font-weight:600;white-space:nowrap}
+.st-musteri{background:#ECEFF1;color:var(--ink-2)}
 .st-yeni{background:var(--flag-l);color:#7A5A00}
 .st-hazirlaniyor{background:var(--warn-l);color:var(--warn)}
 .st-teklif{background:var(--sea-l);color:var(--sea-d)}

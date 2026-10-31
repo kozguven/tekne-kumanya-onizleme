@@ -33,7 +33,7 @@
     <div class="dh">
       <div><div style="display:flex;align-items:center;gap:10px"><div class="mark">M</div><b style="font-family:'Barlow Condensed';font-size:22px">Mavi Kumanya</b></div>
         <p class="small muted" style="margin-top:6px">Tekne kumanya tedariki<br>Göcek / Fethiye, 0252 000 00 00</p></div>
-      <div style="text-align:right"><h1>${isInv ? esc(f ? f.type : '') + ' Fatura' : 'Kumanya Teklifi'}</h1>
+      <div style="text-align:right"><h1>${isInv ? esc(f ? f.type : '') + ' Fatura' : (o.status === 'musteri' || o.status === 'yeni' ? 'Tahmini Kumanya Teklifi' : 'Kumanya Teklifi')}</h1>
         <p class="small">${isInv && f ? 'Fatura no: <b>' + f.no + '</b><br>Tarih: ' + trDate(f.date) : 'Teklif no: <b>' + o.no + '</b>, sürüm ' + o.version + '<br>Tarih: ' + trDate(dayStr(0))}</p></div>
     </div>
     <div class="two">

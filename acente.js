@@ -149,27 +149,34 @@ function step3(bar) {
       <div class="sumrow tot"><span>Tahmini tutar</span><span class="num">${money(sum)}</span></div>
       <p class="small muted">Gramajlı ürünlerde kesin tutar tartımdan sonra teklifte netleşir.</p>
     </div>
-    <div style="display:flex;gap:10px;margin-top:16px"><button class="btn alt" id="pv">Geri</button><button class="btn flag" style="flex:1" id="send">Siparişi gönder</button></div>`;
+    <p class="small muted" style="margin:14px 0 8px">İsterseniz önce müşterinize tahmini teklif PDF'ini gönderin; müşteri kabul edince siparişi tek tuşla Mavi Kumanya'ya iletirsiniz.</p>
+    <button class="btn block" id="cust">Müşteriye tahmini teklif gönder</button>
+    <div style="display:flex;gap:10px;margin-top:10px"><button class="btn alt" id="pv">Geri</button><button class="btn flag" style="flex:1" id="send">Siparişi doğrudan gönder</button></div>`;
   $('#d').onchange = e => draft.date = e.target.value;
   $('#tm').onchange = e => draft.time = e.target.value;
   $('#pl').onchange = e => draft.place = e.target.value;
   $('#nt').oninput = e => draft.note = e.target.value;
   $('#pv').onclick = () => { draft.step = 2; viewNew(); };
-  $('#send').onclick = () => {
+  const create = status => {
     const id = 'o' + Date.now();
     S.orders.push({ id, no: S.seq.order++, a: me, b: draft.b, c: draft.c, date: draft.date, time: draft.time, place: draft.place, note: draft.note,
-      status: 'yeni', version: 1, created: dayStr(0), lines: items.map(([pid, n]) => L(pid, n)) });
-    save(); draft = null; toast('Siparişiniz iletildi. Teklif hazır olunca burada görünecek.'); go('siparis/' + id);
+      status, version: 1, created: dayStr(0), lines: items.map(([pid, n]) => L(pid, n)) });
+    save(); draft = null; return id;
   };
+  $('#send').onclick = () => { const id = create('yeni'); toast('Siparişiniz iletildi. Teklif hazır olunca burada görünecek.'); go('siparis/' + id); };
+  $('#cust').onclick = () => { const id = create('musteri'); go('siparis/' + id); custPdf(id); };
 }
 
 /* --- sipariş ayrıntısı --- */
 function viewOrder(id) {
   const o = order(id), idx = FLOW.indexOf(o.status);
   setTitle(boat(o.b).name, 'Sipariş ' + o.no);
-  const canApprove = o.status === 'teklif';
+  const canApprove = o.status === 'teklif', atCust = o.status === 'musteri';
   view.innerHTML = `
     <div style="margin-bottom:12px">${stTag(o.status)}</div>
+    ${atCust ? `<div class="card" style="margin-bottom:12px;border-color:var(--sea)">
+      <b>Müşteri onayı bekleniyor</b><p class="small muted" style="margin:4px 0 10px">Tahmini teklif PDF'ini müşterinize gönderin. Müşteri kabul edince siparişi Mavi Kumanya'ya iletin; hazırlık o zaman başlar.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn alt sm" id="pdfc">Tahmini teklifi gönder</button><button class="btn sm okb" id="acc">Müşteri kabul etti, siparişi gönder</button></div></div>` : ''}
     <div class="card" style="margin-bottom:12px">
       <div class="sumrow"><span class="muted">Müşteri</span><b>${esc(cust(o.c).name)}</b></div>
       <div class="sumrow"><span class="muted">Teslim</span><span>${dayLabel(o.date)} ${o.time}</span></div>
@@ -185,10 +192,23 @@ function viewOrder(id) {
     </div>
     <div class="card">
       <b>Durum</b>
-      <ul class="timeline">${FLOW.map((s, i) => `<li class="${i <= idx ? 'done' : ''}">${STATUS[s]}</li>`).join('')}</ul>
+      <ul class="timeline"><li class="${atCust || o.wasCust ? 'done' : ''}">Müşteri onayı (isteğe bağlı)</li>${FLOW.map((s, i) => `<li class="${i <= idx ? 'done' : ''}">${STATUS[s]}</li>`).join('')}</ul>
       ${o.invoiceId ? `<a class="btn alt sm" style="margin-top:10px" href="belge.html?tip=fatura&id=${o.id}">Faturayı gör</a>` : ''}
     </div>`;
+  if (atCust) {
+    $('#pdfc').onclick = () => custPdf(o.id);
+    $('#acc').onclick = () => { o.status = 'yeni'; o.wasCust = true; save(); toast('Müşteri kabul etti. Sipariş Mavi Kumanya\'ya iletildi.'); route(); };
+  }
   if (canApprove) $('#ok').onclick = () => { o.status = 'onaylandi'; save(); toast('Teklif onaylandı.'); route(); };
+}
+
+function custPdf(id) {
+  modal(`<h3>Tahmini teklif hazır</h3>
+    <p>${esc(cust(order(id).c).name)} için tahmini tutarlı teklif PDF'i oluşturuldu. Müşterinize WhatsApp'tan gönderebilirsiniz; kabul edince siparişi bize iletirsiniz.</p>
+    <div class="acts" style="justify-content:flex-start"><button class="btn" data-wa>WhatsApp'tan paylaş</button><a class="btn alt" href="belge.html?tip=teklif&id=${id}">PDF'i gör</a></div>
+    <div class="acts"><button class="btn alt" data-close>Kapat</button></div>`, m => {
+    m.querySelector('[data-wa]').onclick = () => toast('Gerçek sistemde telefonun paylaşım menüsü açılır ve PDF müşteriye gider.');
+  });
 }
 
 route();
