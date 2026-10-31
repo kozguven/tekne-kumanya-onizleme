@@ -24,26 +24,50 @@ function route() {
 }
 
 /* --- giriş --- */
+const ROLES = { acente: 'Acente', tekne: 'Tekne sahibi', bireysel: 'Bireysel müşteri' };
+const typeOf = a => a.type || 'acente';
+let role = 'acente';
 function viewLogin() {
   $('#tabs').classList.add('hide'); $('#logout').classList.add('hide'); $('#back').classList.add('hide');
-  setTitle('Mavi Kumanya', 'Acente girişi');
+  setTitle('Mavi Kumanya', ROLES[role] + ' girişi');
+  const list = S.agencies.filter(a => typeOf(a) === role);
   view.innerHTML = `
     <h2 style="margin:6px 0 4px">Hoş geldiniz</h2>
-    <p class="muted" style="margin-bottom:18px">Teknelerinizin kumanya siparişlerini buradan verin, teklif ve teslim durumunu takip edin.</p>
-    <label class="f"><span>Acente (demo için seçin)</span>
-      <select class="inp" id="ag">${S.agencies.map(a => `<option value="${a.id}">${esc(a.name)}</option>`).join('')}</select></label>
-    <label class="f"><span>Kullanıcı adı</span><input class="inp" id="u" value="${esc(S.agencies[0].user)}" autocomplete="off"></label>
+    <p class="muted" style="margin-bottom:14px">Kumanya siparişinizi buradan verin, teklif ve teslim durumunu takip edin.</p>
+    <div class="roles" role="tablist">${Object.entries(ROLES).map(([k, v]) => `<button type="button" role="tab" aria-selected="${k === role}" data-role="${k}" class="${k === role ? 'on' : ''}">${v}</button>`).join('')}</div>
+    <label class="f"><span>Hesap (demo için seçin)</span>
+      <select class="inp" id="ag">${list.map(a => `<option value="${a.id}">${esc(a.name)}</option>`).join('')}</select></label>
+    <label class="f"><span>Kullanıcı adı veya telefon</span><input class="inp" id="u" value="${esc(list[0].user)}" autocomplete="off"></label>
     <label class="f"><span>Şifre</span><input class="inp" type="password" value="demo1234" autocomplete="off"></label>
     <button class="btn block" id="in">Giriş yap</button>
-    <p class="small muted" style="margin-top:14px">Gerçek sistemde her acenteye kendi kullanıcı adı ve şifresi verilir; acente yalnız kendi siparişlerini görür.</p>`;
+    ${role === 'bireysel' ? `<button class="btn alt block" id="su" style="margin-top:10px">Üye ol</button>` : ''}
+    <p class="small muted" style="margin-top:14px">${{
+      acente: 'Acente hesaplarını Mavi Kumanya açar; acente yalnız kendi siparişlerini görür ve faturayı teknenin müşterisi adına ister.',
+      tekne: 'Tekne sahipleri kendi teknelerine sipariş verir; fatura kendi firmalarına ya da misafirlerine kesilebilir.',
+      bireysel: 'Bireysel müşteri kendisi üye olur; fatura doğrudan kendi adına kesilir. İsterseniz yeni üyeler onayınızdan sonra sipariş verebilir.'
+    }[role]}</p>`;
+  view.querySelectorAll('[data-role]').forEach(b => b.onclick = () => { role = b.dataset.role; viewLogin(); });
   $('#ag').onchange = e => { $('#u').value = agency(e.target.value).user; };
-  $('#in').onclick = () => { me = $('#ag').value; try { sessionStorage.setItem('acente', me); } catch (e) {} go('liste'); };
+  $('#in').onclick = () => login($('#ag').value);
+  const su = $('#su'); if (su) su.onclick = signUp;
+}
+function login(id) { me = id; try { sessionStorage.setItem('acente', me); } catch (e) {} go('liste'); }
+function signUp() {
+  modal(`<h3>Üye ol</h3>
+    <label class="f"><span>Ad soyad veya firma unvanı</span><input class="inp" id="n" value="Selim Arslan"></label>
+    <label class="f"><span>Cep telefonu</span><input class="inp" id="t" inputmode="tel" value="0537 000 99 00"></label>
+    <label class="f"><span>E-posta</span><input class="inp" id="e" type="email" value="selim@ornek.com"></label>
+    <label class="f"><span>T.C. kimlik no / vergi no</span><input class="inp" inputmode="numeric" value="5678901••••"></label>
+    <label style="display:flex;gap:8px;align-items:flex-start;font-size:14px"><input type="checkbox" checked style="margin-top:4px"> Aydınlatma metnini okudum, bilgilerimin sipariş ve fatura için kullanılmasını onaylıyorum.</label>
+    <div class="acts"><button class="btn alt" data-close>Vazgeç</button><button class="btn" id="sv">Üyeliği tamamla</button></div>`, m => {
+    m.querySelector('#sv').onclick = () => { m.remove(); toast('Demo: telefonunuza gelen kodla üyelik doğrulanır.'); login('a5'); };
+  });
 }
 
 /* --- siparişlerim --- */
 function viewList() {
   const a = agency(me);
-  setTitle('Siparişlerim', a.name);
+  setTitle('Siparişlerim', a.name + (typeOf(a) === 'acente' ? '' : ', ' + ROLES[typeOf(a)].toLocaleLowerCase('tr')));
   const mine = S.orders.filter(o => o.a === me).sort((x, y) => y.no - x.no);
   view.innerHTML = `
     <div class="olist">${mine.map(o => `
@@ -70,18 +94,25 @@ function viewNew() {
 
 function step1(bar) {
   const boats = S.boats.filter(b => b.a === me), custs = S.customers.filter(c => c.a === me);
+  const solo = typeOf(agency(me)) === 'bireysel';
+  if (solo) draft.c = custs[0].id;
   view.innerHTML = bar + `
-    <h2 style="margin-bottom:4px">Tekne ve müşteri</h2>
-    <p class="muted small" style="margin-bottom:14px">Fatura acenteye değil, seçtiğiniz müşteriye kesilir.</p>
+    <h2 style="margin-bottom:4px">${solo ? 'Tekne' : 'Tekne ve müşteri'}</h2>
+    <p class="muted small" style="margin-bottom:14px">${solo ? 'Fatura sizin adınıza kesilir: ' + esc(custs[0].name) + '.' : typeOf(agency(me)) === 'acente' ? 'Fatura acenteye değil, seçtiğiniz müşteriye kesilir.' : 'Fatura seçtiğiniz kişi veya firma adına kesilir.'}</p>
     <label class="f"><span>Tekne</span><select class="inp" id="b"><option value="">Tekne seçin</option>
       ${boats.map(b => `<option value="${b.id}" ${draft.b === b.id ? 'selected' : ''}>${esc(b.name)}</option>`).join('')}</select></label>
-    <label class="f"><span>Fatura kesilecek müşteri</span><select class="inp" id="c"><option value="">Müşteri seçin</option>
+    <button type="button" class="linkbtn" id="nb">Tekne ekle</button>
+    ${solo ? '' : `<label class="f" style="margin-top:10px"><span>Fatura kesilecek müşteri</span><select class="inp" id="c"><option value="">Müşteri seçin</option>
       ${custs.map(c => `<option value="${c.id}" ${draft.c === c.id ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select></label>
-    <button type="button" class="linkbtn" id="nc">Yeni müşteri ekle</button>
+    <button type="button" class="linkbtn" id="nc">Yeni müşteri ekle</button>`}
     <button class="btn block" id="nx" style="margin-top:18px">Ürünleri seç</button>`;
   $('#b').onchange = e => draft.b = e.target.value;
-  $('#c').onchange = e => draft.c = e.target.value;
-  $('#nc').onclick = newCustomer;
+  if (!solo) { $('#c').onchange = e => draft.c = e.target.value; $('#nc').onclick = newCustomer; }
+  $('#nb').onclick = () => modal(`<h3>Tekne ekle</h3><label class="f"><span>Tekne adı</span><input class="inp" id="bn"></label>
+    <div class="acts"><button class="btn alt" data-close>Vazgeç</button><button class="btn" id="sv">Kaydet</button></div>`, m => {
+    m.querySelector('#sv').onclick = () => { const n = m.querySelector('#bn').value.trim(); if (!n) return toast('Tekne adını yazın.');
+      const id = 'b' + (S.seq.boat++); S.boats.push({ id, a: me, name: n }); save(); draft.b = id; m.remove(); viewNew(); };
+  });
   $('#nx').onclick = () => {
     if (!draft.b || !draft.c) return toast('Tekne ve fatura kesilecek müşteriyi seçin.');
     draft.step = 2; viewNew();

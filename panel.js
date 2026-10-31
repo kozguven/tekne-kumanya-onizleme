@@ -291,7 +291,7 @@ function viewAgencies() {
   view.innerHTML = `
     <div class="hd"><div><h1>Acenteler ve tekneler</h1><p>Her acentenin kendi girişi ve tekneleri vardır.</p></div></div>
     <div class="grid2" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">${S.agencies.map(a => `
-      <div class="card"><h2>${esc(a.name)}</h2><p class="small muted">${esc(a.person)}, ${esc(a.phone)}<br>Kullanıcı adı: ${esc(a.user)}</p>
+      <div class="card"><h2>${esc(a.name)}</h2><p class="small" style="color:var(--teak);font-weight:600">${{ tekne: 'Tekne sahibi', bireysel: 'Bireysel üye' }[a.type] || 'Acente'}</p><p class="small muted">${esc(a.person)}, ${esc(a.phone)}<br>Kullanıcı adı: ${esc(a.user)}</p>
         <p style="margin-top:10px"><b>Tekneler:</b> ${S.boats.filter(b => b.a === a.id).map(b => esc(b.name)).join(', ')}</p>
         <p class="small" style="margin-top:6px"><b>Müşteriler:</b> ${S.customers.filter(c => c.a === a.id).map(c => esc(c.name)).join(', ')}</p>
         <p class="small muted" style="margin-top:6px">${S.orders.filter(o => o.a === a.id).length} sipariş</p></div>`).join('')}</div>`;

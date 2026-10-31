@@ -136,6 +136,9 @@ table.t tr.click:hover td{background:#F7FAFA}
 .olist .o .l2{font-size:14px;color:var(--muted);margin-top:4px}
 .olist .o .l3{display:flex;justify-content:space-between;margin-top:8px;font-weight:600}
 
+.roles{display:flex;gap:6px;margin-bottom:16px}
+.roles button{flex:1;min-height:44px;border:1px solid var(--line);background:#fff;border-radius:8px;font-weight:600;font-size:14px;cursor:pointer;padding:4px}
+.roles button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 .wiz{display:flex;gap:6px;margin-bottom:16px}
 .wiz div{flex:1;height:5px;border-radius:3px;background:var(--line)}
 .wiz div.on{background:var(--sea)}

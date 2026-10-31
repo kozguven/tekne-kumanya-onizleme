@@ -1,5 +1,5 @@
 /* Demo verisi ve ortak yardımcılar. Veriler yalnız bu tarayıcıda saklanır. */
-const KEY = 'kumanya-demo-v2';
+const KEY = 'kumanya-demo-v3';
 
 const CATS = ['Kasap', 'Balık', 'Manav', 'Süt ve kahvaltılık', 'Market', 'İçecek'];
 
@@ -56,7 +56,9 @@ const PRODUCTS = [
 const AGENCIES = [
   { id: 'a1', name: 'Ege Mavi Yatçılık', user: 'egemavi', person: 'Selin Aydın', phone: '0532 000 11 22' },
   { id: 'a2', name: 'Göcek Koy Charter', user: 'gocekkoy', person: 'Murat Er', phone: '0533 000 33 44' },
-  { id: 'a3', name: 'Likya Rota Turizm', user: 'likyarota', person: 'Deniz Kaya', phone: '0535 000 55 66' }
+  { id: 'a3', name: 'Likya Rota Turizm', user: 'likyarota', person: 'Deniz Kaya', phone: '0535 000 55 66' },
+  { id: 'a4', type: 'tekne', name: 'Yılmaz Denizcilik', user: 'hakanyilmaz', person: 'Hakan Yılmaz', phone: '0536 000 77 88' },
+  { id: 'a5', type: 'bireysel', name: 'Selim Arslan', user: 'selim.arslan', person: 'Selim Arslan', phone: '0537 000 99 00' }
 ];
 
 const BOATS = [
@@ -64,7 +66,8 @@ const BOATS = [
   { id: 'b3', a: 'a1', name: 'Kaptan Rıza' }, { id: 'b4', a: 'a1', name: 'Su Perisi' },
   { id: 'b5', a: 'a2', name: 'Yıldız Koyu' }, { id: 'b6', a: 'a2', name: 'Ada Rüzgârı' },
   { id: 'b7', a: 'a2', name: 'Lodos' }, { id: 'b8', a: 'a3', name: 'Likya Prensesi' },
-  { id: 'b9', a: 'a3', name: 'Gökova' }
+  { id: 'b9', a: 'a3', name: 'Gökova' }, { id: 'b10', a: 'a4', name: 'Deniz Kızı' },
+  { id: 'b11', a: 'a4', name: 'Mavi Yol' }, { id: 'b12', a: 'a5', name: 'Poyraz' }
 ];
 
 const CUSTOMERS = [
@@ -73,7 +76,9 @@ const CUSTOMERS = [
   { id: 'c3', a: 'a1', name: 'Cengiz Öztürk', taxNo: '3456789••••', email: 'cengiz@ornek.com', addr: 'Nilüfer / Bursa' },
   { id: 'c4', a: 'a2', name: 'Thomas Weber', taxNo: 'Pasaport, yabancı uyruklu', email: 'weber@ornek.de', addr: 'Köln / Almanya' },
   { id: 'c5', a: 'a2', name: 'Öz Kardeşler Tekstil Ltd. Şti.', taxNo: 'VKN 645••••••', email: 'muhasebe@ornek.com.tr', addr: 'Osmangazi / Bursa' },
-  { id: 'c6', a: 'a3', name: 'Ayşe Korkmaz', taxNo: '4567890••••', email: 'ayse@ornek.com', addr: 'Karşıyaka / İzmir' }
+  { id: 'c6', a: 'a3', name: 'Ayşe Korkmaz', taxNo: '4567890••••', email: 'ayse@ornek.com', addr: 'Karşıyaka / İzmir' },
+  { id: 'c7', a: 'a4', name: 'Yılmaz Denizcilik Ltd. Şti.', taxNo: 'VKN 987••••••', email: 'info@ornek.com.tr', addr: 'Fethiye / Muğla' },
+  { id: 'c8', a: 'a5', name: 'Selim Arslan', taxNo: '5678901••••', email: 'selim@ornek.com', addr: 'Beşiktaş / İstanbul' }
 ];
 
 const PLACES = ['Göcek Belediye İskelesi', 'Göcek Skopea Marina', 'Fethiye Ece Marina', 'Fethiye Kordon İskelesi'];
@@ -119,7 +124,7 @@ function seed() {
       payment: { method: 'Nakit', amount: 0, date: dayStr(-4) }, invoiceId: 'f1',
       lines: [L('p1', 3, { done: true, actual: 3 }), L('p7', 2, { done: true, actual: 2 }), L('p21', 4, { done: true }), L('p26', 2, { done: true }), L('p30', 1, { done: true }), L('p15', 6, { done: true, actual: 6 }), L('p41', 8, { done: true })] }
   ];
-  const s = { products: PRODUCTS, agencies: AGENCIES, boats: BOATS, customers: CUSTOMERS.slice(), orders, invoices: [], seq: { order: 1120, invoice: 58, customer: 7 } };
+  const s = { products: PRODUCTS, agencies: AGENCIES, boats: BOATS, customers: CUSTOMERS.slice(), orders, invoices: [], seq: { order: 1120, invoice: 58, customer: 9, boat: 13 } };
   const o5 = orders.find(o => o.id === 'o5'); o5.payment.amount = total(o5);
   const o6 = orders.find(o => o.id === 'o6'); o6.payment.amount = total(o6);
   s.invoices.push({ id: 'f1', no: 'MKU2026000000057', orderId: 'o6', date: dayStr(-4), type: 'e-Arşiv', amount: total(o6) });
